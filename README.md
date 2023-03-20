@@ -55,13 +55,13 @@ Here, for EVSE L1/2 Referance design, we use `evse-l2-ocpp-test-egt_defconfig`.
 
 
 
-    git clone https://bitbucket.microchip.com/projects/SALESAPPS/repos/ref_public_ev_charger/
+    $ git clone https://bitbucket.microchip.com/projects/SALESAPPS/repos/ref_public_ev_charger/
 
-    cd buildroot
-    git checkout linux4sam-2022.10 -b buildroot-at91-linux4sam-2022.10
+    $ cd buildroot
+    $ git checkout linux4sam-2022.10 -b buildroot-at91-linux4sam-2022.10
 
-    BR2_EXTERNAL=../ref_public_ev_charger-dev/Firmware/buildroot-external-evse-l2-charger/ make evse-l2-ocpp-test-egt_defconfig
-    make
+    $ BR2_EXTERNAL=../ref_public_ev_charger-dev/Firmware/buildroot-external-evse-l2-charger/ make evse-l2-ocpp-test-egt_defconfig
+    $ make
 
 The resulting bootloader, kernel, and root filesystem will be put in the
 'output/images' directory.  There is also a complete `sdcard.img`.
