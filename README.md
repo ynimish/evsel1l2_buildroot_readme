@@ -82,14 +82,9 @@ Create a list of software licenses used:
 
 ## Supported Families
 
-This buildroot external repository supports several board families from
+This buildroot external repository supports WLSOM1-EK board only right now 
 Microchip Technology, Inc.
 
-### AT91 boards
-
-AT91 boards are based on AT91 SAM architecture, based on ARM processors.
-These include boards based on ARMv5 and ARMv7, on cores like the ARM926 and
-ARM Cortex-A5 or ARM Cortex-A7.
 
 #### Create an SD Card
 
@@ -108,15 +103,84 @@ card:
 Another method, which is cross platform, to write the SD card image is to use
 [Etcher][5].
 
-For more information on how these components are generated and what makes up a
-bootable SD card, see [SDCardBootNotice][4].
+#### Run Demo
+Use the same SD card, and insert into board. Power on the board, you will see Kernel
+log on serial port. 
+To findout serail port you can use bellow command on you machine
+    dmesg | grep tty
+This will give you avaliable serial ports. 
+
+You can use PICOCOM to see board logs 
+    picocom -b 115200 /dev/ttyACM0
+
+For exit from PICOCOM use bellow key sequence
+    CTRL+aq
 
 #### Configuring the LCD Display
 
-U-boot will automatically detect your connected display and load the
-corresponding DT-overlay for your screen.
-For more information, adjustments of this behavior, check the information
-on the [at91Wiki][6].
+Right now UBOOT is not detecting LCD automatically.
+
+So during UBOOT, pleas press enter to enter into UBOOT menu
+
+#### Example 
+    U-Boot 2018.07-linux4sam_6.0 (Oct 03 2018 - 16:03:04 +0000)
+
+    CPU: SAMA5D27-CU
+    Crystal frequency:       12 MHz
+    CPU clock        :      498 MHz
+    Master clock     :      166 MHz
+    DRAM:  512 MiB
+    MMC:   sdio-host@a0000000: 0, sdio-host@b0000000: 1
+    Loading Environment from SPI Flash... SF: Detected at25df321a with page size 256 Bytes, erase size 4 KiB, total 4 MiB
+    OK
+    In:    serial@f8020000
+    Out:   serial@f8020000
+    Err:   serial@f8020000
+    PDA TM5000 detected
+    Net:   eth0: ethernet@f8008000
+    Hit any key to stop autoboot:  0
+
+Then use folloing command 
+    => print
+    at91_pda_detect=run pda4300test; run pda7000test; run pda7000btest; run pda5000test; run hdmi_test;
+    at91_prepare_bootargs=test -n $display_var && setenv bootargs ${bootargs} ${at91_video_bootargs}
+    at91_prepare_overlays_config=test -n $display_var && setenv at91_overlays_config '#'${display_var}
+    at91_prepare_video_bootargs=test -n $display_var && setenv at91_video_bootargs video=${video_mode}
+    at91_set_display=test -n $pda && setenv display $pda
+    baudrate=115200
+    bootargs=console=ttyS0,115200 root=/dev/mmcblk0p1 rw rootfstype=ext4 rootwait atmel.pm_modes=standby,ulp1
+    bootcmd=run at91_set_display; run at91_pda_detect; run at91_prepare_video_bootargs; run at91_prepare_bootargs; run at91_prepare_overlays_config; run bootcmd_boot;
+    bootcmd_boot=ext4load mmc 0 0x24000000 boot/sama5d2_xplained.itb; bootm 0x24000000#kernel_dtb${at91_overlays_config}
+    bootdelay=1
+    ethaddr=fc:c2:3d:0d:1f:4b
+    fdtcontroladdr=3fb773c8
+    hdmi_test=test -n $display && test $display = hdmi && setenv display_var 'hdmi' && setenv video_mode ${video_mode_hdmi}
+    pda4300test=test -n $display && test $display = 4300 && setenv display_var 'pda4' && setenv video_mode ${video_mode_pda4}
+    pda5000test=test -n $display && test $display = 5000 && setenv display_var 'pda5' && setenv video_mode ${video_mode_pda5}
+    pda7000btest=test -n $display && test $display = 7000B && setenv display_var 'pda7b' && setenv video_mode ${video_mode_pda7b}
+    pda7000test=test -n $display && test $display = 7000 && setenv display_var 'pda7' && setenv video_mode ${video_mode_pda7}
+    stderr=serial@f8020000
+    stdin=serial@f8020000
+    stdout=serial@f8020000
+    video_mode_hdmi=HDMI-A-1:1152x768-16
+    video_mode_pda4=Unknown-1:480x272-16
+    video_mode_pda5=Unknown-1:800x480-16
+    video_mode_pda7=Unknown-1:800x480-16
+    video_mode_pda7b=Unknown-1:800x480-16 
+
+
+    serenv display_var 'pda5'
+
+    saveenv 
+
+    boot
+
+After this unless you change SD card, display will work automatically 
+
+more information 
+    https://www.linux4sam.org/bin/view/Linux4SAM/UsingFITwithOverlays
+    https://www.linux4sam.org/bin/view/Linux4SAM/SelectingPDAatBoot
+
 
 #### Kernel and Device Tree Blob packaging
 
@@ -130,92 +194,7 @@ For more information, check the information on the [at91Wiki][7].
 For more information on using and updating buildroot-at91, see the [buildroot
 documentation][3].
 
-### PolarFire SoC
 
-There are several configurations available for PolarFire SoC Icicle Kit.
-To generate an image, choose any of the Icicle Kit defconfigs provided
-in the configs directory and follow the corresponding instructions.
-
-For example, to build an image suitable for programming to the SD/eMMC
-for the Icicle Kit:
-
-    BR2_EXTERNAL=../buildroot-external-microchip/ make icicle_defconfig
-    make
-
-The `icicle_amp_defconfig` can be used to build the Icicle Kit with
-Asymmetric Multiprocessing (AMP) support. For more information on AMP,
-please see the [AMP guide for PolarFire SoC][9].
-
-Please note that this buildroot external is intended for use with the latest
-version of the [Icicle Kit Reference Design][13]. For reference design versions
-prior to v2022.10, please use the [linux4microchip+fpga-2022.11 tag][14] of this
-repository.
-
-#### Create an Image for eMMC/SD Card
-
-An image is generated in the file `sdcard.img` in the output/images
-directory. The first partition of this image contains a U-Boot binary,
-embedded in a Hart Software Services (HSS) payload. The second partition
-contains a FAT filesystem with a U-Boot env and an ITB file containing
-the kernel and the device tree. The third partition contains the file
-system. This image can be written directly to the eMMC or an SD card.
-
-The `icicle_defconfig` generates an image with RAM-based
-filesystem, whereas the `icicle_rootfs_defconfig` generates an image containing
-a root filesystem.
-
-There are several ways to copy the image to the eMMC or an SD card:
-
-a) Copy the image to the eMMC or SD card using the standard Unix `dd` tool:
-
-Find the device node name for your card and then copy the image as shown below:
-
-    cd output/images
-    sudo dd if=sdcard.img of=/dev/sdX bs=1M
-
-b) Copy the image to the eMMC or SD card using `bmaptool` (recommended)
-
-This is a generic tool for creating a block map (bmap) for a file and copying
-files using this block map. Raw system image files can be flashed a lot faster
-with bmaptool than with traditional tools, like "dd".
-
-    cd output/images
-    sudo bmaptool copy sdcard.img /dev/sdX
-
-If using an SD Card, you need at least 8GB. All the data on the SD card
-will be lost.
-
-Another method, which is cross platform, to write the image is to use
-[USBImager][10] or [Etcher][5].
-
-For instructions on how to transfer the image to the eMMC/SD, please refer to
-the *Programming the Linux image* section of our [guide on updating PolarFire SoC dev kits][12].
-
-#### Create an Image for an external QSPI Flash memory
-
-The `icicle_nor_defconfig` and `icicle_nand_defconfig` defconfigs provide
-support for building images suitable for programming to the oficially supported
-QSPI flash memories.
-
-An image with the name `nor.img` or `nand.img `is generated in the output/images directory.
-
-For more information on how to enable QSPI support on PolarFire SoC, please
-refer to the [Booting from QSPI][11] documentation.
-
-Note: The nand.img image generated triggers a "free space fixup" procedure in
-the kernel the very first time the file system is mounted. Therefore, the first
-mount might take additional time to complete. This is a one-time harmless procedure
-that involves finding all empty pages in the UBIFS file system and re-erasing them. This is useful
-when a non-UBIFS-aware programmer is used to flash the image to a NAND memory.
-
-For instructions on how to transfer the image to the external QSPI flash memory
-refer to the *External QSPI Flash Memory* section of the [updating PolarFire SoC dev kits][12]
-documentation.
-
-#### Documentation
-
-For more information on using buildroot for PolarFire SoC, see
-the [PolarFire SoC documentation][8].
 
 ## License
 
