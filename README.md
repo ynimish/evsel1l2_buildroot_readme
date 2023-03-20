@@ -182,11 +182,11 @@ Then use folloing command
     video_mode_pda7b=Unknown-1:800x480-16 
 
 
-    serenv display_var 'pda5'
+    => serenv display_var 'pda5'
 
-    saveenv 
+    => saveenv 
 
-    boot
+    => boot
 
 After this unless you change SD card, display will work automatically 
 
