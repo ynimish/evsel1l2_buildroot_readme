@@ -18,6 +18,13 @@ dependencies are required.
     libncurses5-dev texinfo autoconf automake libtool mercurial git-core \
     gperf gawk expat curl cvs libexpat-dev bzr unzip bc python-dev \
     wget cpio rsync xxd bmap-tools
+   
+We need serial port terminal on PC so that we can see logs and run demo 
+I am useing PICOCOM, you can chose anything you are confertable of 
+
+To install PICOCOM example command is like bellow 
+    
+    sudo apt install picocom
 
 In some cases, buildroot will notify that additional host dependencies are
 required.  It will let you know what those are.
