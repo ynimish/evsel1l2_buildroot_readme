@@ -1,6 +1,6 @@
 ![Microchip](docs/microchip_logo.png)
 
-# Microchip Buildroot External
+# Microchip EVSE Level 2/3 Type 1/2 Buildroot External
 
 This [buildroot external][1] includes Microchip packages, patches, setup, and
 configuration to work with Microchip provided software that is not included in
@@ -28,20 +28,32 @@ required.  It will let you know what those are.
 For AT91, this buildroot external works only with the specific buildroot-at91
 version 2022.02-at91.
 
-For PolarFire SoC, this buildroot external was tested and works with buildroot
-version 2022.02.
-
 
 ## Build
 
 Clone, configure, and build.  When building, use the appropriate defconfig in
 the `buildroot-external-microchip/configs` directory for your board.
-Here, as an example, we use `sama5d4_xplained_graphics_defconfig`.
+Here, for EVSE L1/2 Referance design, we use `evse-l2-ocpp-test-egt_defconfig`.
 
-    git clone https://github.com/linux4microchip/buildroot-external-microchip.git -b 2022.02-mchp
-    git clone https://git.busybox.net/buildroot -b 2022.02
+    $ git clone https://github.com/linux4sam/buildroot-at91.git
+    Cloning into 'buildroot-at91'...
+    remote: Counting objects: 271126, done.
+    remote: Compressing objects: 100% (2/2), done.
+    remote: Total 271126 (delta 0), reused 2 (delta 0), pack-reused 271124
+    Receiving objects: 100% (271126/271126), 61.00 MiB | 2.36 MiB/s, done.
+    Resolving deltas: 100% (186357/186357), done.
+
+    $ ls buildroot-at91/
+    arch  board  boot  CHANGES  Config.in  Config.in.legacy  configs  COPYING  DEVELOPERS  docs  fs  linux  Makefile  Makefile.legacy  package  README  support  system  toolchain  utils
+
+
+
+    git clone https://bitbucket.microchip.com/projects/SALESAPPS/repos/ref_public_ev_charger/
+
     cd buildroot
-    BR2_EXTERNAL=../buildroot-external-microchip/ make sama5d4_xplained_graphics_defconfig
+    git checkout linux4sam-2022.10 -b buildroot-at91-linux4sam-2022.10
+
+    BR2_EXTERNAL=../ref_public_ev_charger-dev/Firmware/buildroot-external-evse-l2-charger/ make evse-l2-ocpp-test-egt_defconfig
     make
 
 The resulting bootloader, kernel, and root filesystem will be put in the
