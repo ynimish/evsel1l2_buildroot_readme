@@ -111,9 +111,11 @@ To findout serail port you can use bellow command on you machine
 This will give you avaliable serial ports. 
 
 You can use PICOCOM to see board logs 
+    
     picocom -b 115200 /dev/ttyACM0
 
 For exit from PICOCOM use bellow key sequence
+    
     CTRL+aq
 
 #### Configuring the LCD Display
@@ -123,6 +125,7 @@ Right now UBOOT is not detecting LCD automatically.
 So during UBOOT, pleas press enter to enter into UBOOT menu
 
 #### Example 
+    
     U-Boot 2018.07-linux4sam_6.0 (Oct 03 2018 - 16:03:04 +0000)
 
     CPU: SAMA5D27-CU
@@ -141,6 +144,7 @@ So during UBOOT, pleas press enter to enter into UBOOT menu
     Hit any key to stop autoboot:  0
 
 Then use folloing command 
+    
     => print
     at91_pda_detect=run pda4300test; run pda7000test; run pda7000btest; run pda5000test; run hdmi_test;
     at91_prepare_bootargs=test -n $display_var && setenv bootargs ${bootargs} ${at91_video_bootargs}
@@ -178,6 +182,7 @@ Then use folloing command
 After this unless you change SD card, display will work automatically 
 
 more information 
+    
     https://www.linux4sam.org/bin/view/Linux4SAM/UsingFITwithOverlays
     https://www.linux4sam.org/bin/view/Linux4SAM/SelectingPDAatBoot
 
