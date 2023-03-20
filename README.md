@@ -86,7 +86,7 @@ This buildroot external repository supports WLSOM1-EK board only right now
 Microchip Technology, Inc.
 
 
-#### Create an SD Card
+## Create an SD Card
 
 A SD card image is generated in the file `sdcard.img`.  The first partition of
 this image contains a FAT filesystem with at91bootstrap, u-boot, a u-boot env,
@@ -103,11 +103,13 @@ card:
 Another method, which is cross platform, to write the SD card image is to use
 [Etcher][5].
 
-#### Run Demo
+## Run Demo
 Use the same SD card, and insert into board. Power on the board, you will see Kernel
 log on serial port. 
 To findout serail port you can use bellow command on you machine
+    
     dmesg | grep tty
+
 This will give you avaliable serial ports. 
 
 You can use PICOCOM to see board logs 
@@ -118,7 +120,7 @@ For exit from PICOCOM use bellow key sequence
     
     CTRL+aq
 
-#### Configuring the LCD Display
+## Configuring the LCD Display
 
 Right now UBOOT is not detecting LCD automatically.
 
