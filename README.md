@@ -182,7 +182,7 @@ Then use folloing command
     video_mode_pda7b=Unknown-1:800x480-16 
 
 
-    => serenv display_var 'pda5'
+    => setenv display_var 'pda5'
 
     => saveenv 
 
